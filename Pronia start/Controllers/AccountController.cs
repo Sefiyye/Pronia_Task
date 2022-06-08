@@ -11,7 +11,7 @@ namespace Pronia_start.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(UserManager<AppUser>userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -32,8 +32,12 @@ namespace Pronia_start.Controllers
                 Email = register.Email,
                 UserName = register.Username
             };
-            var result = await _userManager.CreateAsync(user, register.Password);
-            if (!result.Succeeded)
+
+            if (register.Conditions)
+            {
+
+                IdentityResult result = await _userManager.CreateAsync(user, register.Password);
+                if (!result.Succeeded)
             {
                 foreach (IdentityError error in result.Errors)
                 {
@@ -41,8 +45,15 @@ namespace Pronia_start.Controllers
                 }
                 return View();
             }
+            await _signInManager.SignInAsync(user, false);
             return RedirectToAction("Index", "Home");
         }
+        else
+        {
+            ModelState.AddModelError("","Please accept conditions");
+            return View();
+    }
+}
         public IActionResult Login()
         {
             return View();

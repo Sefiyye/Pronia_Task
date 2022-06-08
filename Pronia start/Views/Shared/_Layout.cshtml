@@ -1092,6 +1092,12 @@
 
     <!--Main JS (Common Activation Codes)-->
     <script src="~/assets/js/main.js"></script>
+    @RenderSection("Scripts", required: false)
+    <script>
+        $(".product-item_remove").click(function () {
+            this.parentNode.remove();
+        })
+    </script>
 </body>
 </html>
 
